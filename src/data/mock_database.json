@@ -1,0 +1,65 @@
+[
+  {
+    "zipCode": "10001",
+    "city": "New York",
+    "state": "NY",
+    "hardness": "Soft",
+    "contaminants": [
+      "Lead",
+      "Chlorine",
+      "Microplastics"
+    ]
+  },
+  {
+    "zipCode": "90210",
+    "city": "Beverly Hills",
+    "state": "CA",
+    "hardness": "Hard",
+    "contaminants": [
+      "PFAS",
+      "Arsenic",
+      "Chlorine"
+    ]
+  },
+  {
+    "zipCode": "60601",
+    "city": "Chicago",
+    "state": "IL",
+    "hardness": "Moderate",
+    "contaminants": [
+      "Lead",
+      "Chromium-6"
+    ]
+  },
+  {
+    "zipCode": "33101",
+    "city": "Miami",
+    "state": "FL",
+    "hardness": "Very Hard",
+    "contaminants": [
+      "Bacteria",
+      "PFAS",
+      "Chlorine"
+    ]
+  },
+  {
+    "zipCode": "98101",
+    "city": "Seattle",
+    "state": "WA",
+    "hardness": "Soft",
+    "contaminants": [
+      "Chlorine"
+    ]
+  },
+  {
+    "zipCode": "98683",
+    "city": "Vancouver",
+    "state": "WA",
+    "hardness": "Soft",
+    "contaminants": [
+      "PFAS",
+      "Chlorine",
+      "Lead"
+    ]
+  }
+]
