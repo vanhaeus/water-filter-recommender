@@ -170,7 +170,77 @@ export const getWaterQuality = async (zipCode) => {
     const systemInfo = await fetchPWSID(zipCode);
 
     if (!systemInfo) {
-        console.log(`No EPA data found for ${zipCode}. Returning Regional Fallback.`);
+        console.log(`No direct EPA data for ${zipCode}. Attempting Smart City Fallback...`);
+
+        try {
+            // 1. Get City/State from Zip (using Zippopotam.us - free, no key)
+            const zipRes = await fetch(`https://api.zippopotam.us/us/${zipCode}`);
+            if (zipRes.ok) {
+                const zipData = await zipRes.json();
+                const place = zipData.places[0];
+                const city = place['place name'];
+                const state = place['state abbreviation'];
+
+                console.log(`Resolved Zip ${zipCode} to ${city}, ${state}. Returning Regional Profile for ${city}.`);
+
+                // 2. Search EPA for systems in this City (Often fails/unreliable, so we skip to fallback with correct City Name)
+                // const cityUrl = `${EPA_API_BASE}/WATER_SYSTEM/CITY_NAME/${city.toUpperCase()}/STATE_CODE/${state}/JSON`;
+                // const cityData = await fetchEPA(cityUrl);
+
+                // if (cityData && cityData.length > 0) {
+                //     // Filter for Community Water Systems (CWS) and sort by population
+                //     const citySystems = cityData.filter(d => d.pws_type_code === 'CWS');
+                //     const systemsToConsider = citySystems.length > 0 ? citySystems : cityData;
+                //     systemsToConsider.sort((a, b) => (b.population_served_count || 0) - (a.population_served_count || 0));
+
+                //     const bestCityMatch = systemsToConsider[0];
+
+                //     console.log(`Found Smart Fallback: ${bestCityMatch.pwsid} (${bestCityMatch.pws_name})`);
+
+                //     // Recursively get violations for this system
+                //     const { violations, pfasDetected } = await fetchViolations(bestCityMatch.pwsid);
+
+                //     return {
+                //         zipCode,
+                //         pwsid: bestCityMatch.pwsid,
+                //         city: bestCityMatch.pws_name,
+                //         state: state,
+                //         hardness: "Unknown",
+                //         contaminants: violations, // Note: pfasDetected logic handled below if we returned here, but we'll just return full object
+                //         isFallback: true,
+                //         fallbackSource: `City Match (${city})`
+                //     };
+                // }
+
+                return {
+                    zipCode,
+                    pwsid: "REGIONAL_PROFILE",
+                    city: city, // Use real city name!
+                    state: state,
+                    hardness: "Unknown",
+                    contaminants: [
+                        {
+                            name: 'Chlorine',
+                            level: 'Likely Present',
+                            unit: '',
+                            source: 'Standard Disinfection (Regional Profile)'
+                        },
+                        {
+                            name: 'Lead',
+                            level: 'Risk',
+                            unit: '',
+                            source: 'Aging Infrastructure Risk (Regional Profile)'
+                        }
+                    ],
+                    isFallback: true,
+                    fallbackSource: `Regional Profile (${city})`
+                };
+            }
+        } catch (err) {
+            console.error("Smart Fallback failed:", err);
+        }
+
+        console.log(`Smart Fallback failed. Returning Generic Regional Estimate.`);
         return {
             zipCode,
             pwsid: "FALLBACK",
