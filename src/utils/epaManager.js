@@ -170,7 +170,29 @@ export const getWaterQuality = async (zipCode) => {
     const systemInfo = await fetchPWSID(zipCode);
 
     if (!systemInfo) {
-        return null; // No water system found
+        console.log(`No EPA data found for ${zipCode}. Returning Regional Fallback.`);
+        return {
+            zipCode,
+            pwsid: "FALLBACK",
+            city: "Regional Estimate",
+            state: "US",
+            hardness: "Unknown",
+            contaminants: [
+                {
+                    name: 'Chlorine',
+                    level: 'Likely Present',
+                    unit: '',
+                    source: 'Standard Disinfection'
+                },
+                {
+                    name: 'Lead',
+                    level: 'Risk',
+                    unit: '',
+                    source: 'Aging Infrastructure Risk'
+                }
+            ],
+            isFallback: true
+        };
     }
 
     console.log(`Found PWSID: ${systemInfo.pwsid} (${systemInfo.pwsName || 'Unknown Name'}) via ${systemInfo.source}`);
