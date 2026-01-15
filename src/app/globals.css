@@ -24,6 +24,26 @@ body {
     @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
   }
 
+  /* New Liquid Glass & 3D Material Utilities */
+  .glass-liquid {
+    @apply bg-white/10 backdrop-blur-2xl border border-white/30;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  }
+
+  .material-3d {
+    box-shadow:
+      0 1px 1px hsl(0deg 0% 0% / 0.075),
+      0 2px 2px hsl(0deg 0% 0% / 0.075),
+      0 4px 4px hsl(0deg 0% 0% / 0.075),
+      0 8px 8px hsl(0deg 0% 0% / 0.075),
+      0 16px 16px hsl(0deg 0% 0% / 0.075);
+  }
+
+  .text-gradient-liquid {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-teal-300 to-blue-500;
+  }
+
   .animate-fade-in-up {
     animation: fadeInUp 0.6s ease-out forwards;
   }

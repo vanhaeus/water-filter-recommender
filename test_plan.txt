@@ -1,0 +1,9 @@
+const { getWaterQuality } = require('./src/utils/epaManager');
+
+// Mock fetch for Node.js environment if needed, or use a polyfill
+// Since we are in a node environment, we might need to polyfill fetch if it's not available (Node 18+ has it)
+// But epaManager uses ES6 exports. I might need to use a different approach or just run it via next.js api.
+
+// Actually, easier to just create a temporary API route or use the existing one.
+// Let's just use the existing API route via curl after starting the server.
+console.log("Plan changed: will use curl against running server.");

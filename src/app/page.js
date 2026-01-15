@@ -1,87 +1,126 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import LiquidBackground from '../components/LiquidBackground';
 
 export default function Home() {
     const [zipCode, setZipCode] = useState('');
     const router = useRouter();
+    const { scrollYProgress } = useScroll();
+
+    // Parallax & Opacity transforms
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+    const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
+    const searchY = useTransform(scrollYProgress, [0, 0.2], [100, 0]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (zipCode.length === 5) {
             router.push(`/report/${zipCode}`);
-        } else {
-            alert('Please enter a valid 5-digit Zip Code');
         }
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-6 md:p-24 text-center relative overflow-hidden">
-            {/* Background Decor */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-200/30 rounded-full blur-3xl animate-pulse-slow"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-200/30 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1.5s' }}></div>
-            </div>
+        <main className="relative min-h-[200vh] bg-slate-50 text-slate-900 selection:bg-blue-200">
+            <LiquidBackground />
 
-            <div className="max-w-4xl w-full space-y-12 animate-fade-in-up">
-                <div className="space-y-6">
-                    <div className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4 tracking-wide uppercase">
-                        Trusted Water Analysis
-                    </div>
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-tight">
-                        Is Your Tap Water <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Safe?</span>
-                    </h1>
-                    <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                        Check your local water quality and find the right filter for your home in seconds.
-                    </p>
-                </div>
+            {/* Section 1: Immersive Hero */}
+            <section className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
+                <motion.div
+                    style={{ opacity: heroOpacity, scale: heroScale }}
+                    className="text-center z-10 px-4"
+                >
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    >
+                        <span className="inline-block py-1 px-3 rounded-full bg-white/30 backdrop-blur-md border border-white/40 text-blue-600 text-sm font-bold tracking-wide mb-6 shadow-sm">
+                            TRUSTED WATER ANALYSIS
+                        </span>
+                    </motion.div>
 
-                <div className="glass-card p-10 rounded-3xl mt-12 max-w-2xl mx-auto transform transition-all hover:shadow-2xl">
-                    <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4">
-                        <div className="relative flex-1">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
+                    <motion.h1
+                        className="text-6xl md:text-8xl tracking-tighter mb-6 text-slate-900"
+                        style={{ fontWeight: useTransform(scrollYProgress, [0, 0.2], [900, 100]) }}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                    >
+                        Is Your Water <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-teal-400 to-blue-600 animate-gradient-x">
+                            Actually Safe?
+                        </span>
+                    </motion.h1>
+
+                    <motion.p
+                        className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                    >
+                        Discover hidden contaminants and get expert filter recommendations tailored to your home's water quality.
+                    </motion.p>
+
+                    <motion.div
+                        className="mt-12"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1, duration: 1 }}
+                    >
+                        <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">Scroll to Analyze</p>
+                        <motion.div
+                            className="w-0.5 h-16 bg-gradient-to-b from-blue-400 to-transparent mx-auto mt-4"
+                            animate={{ height: [0, 64, 0], opacity: [0, 1, 0], y: [0, 20, 40] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                        />
+                    </motion.div>
+                </motion.div>
+            </section>
+
+            {/* Section 2: Morphing Search Interface */}
+            <section className="relative z-20 min-h-screen flex items-center justify-center px-4 py-20">
+                <motion.div
+                    className="w-full max-w-md"
+                    style={{ y: searchY }}
+                >
+                    <div className="glass-liquid rounded-[2.5rem] p-8 md:p-12 material-3d transform transition-all duration-500 hover:scale-[1.02]">
+                        <div className="text-center mb-10">
+                            <h2 className="text-3xl font-bold text-slate-800 mb-3">Check Your Tap</h2>
+                            <p className="text-slate-500">Enter your zip code to access the EPA database.</p>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="relative group">
+                                <input
+                                    type="text"
+                                    placeholder="Enter Zip Code (e.g. 98683)"
+                                    className="w-full px-6 py-5 bg-white/50 backdrop-blur-sm border-2 border-white/60 rounded-2xl text-lg font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-400/10 transition-all shadow-inner"
+                                    value={zipCode}
+                                    onChange={(e) => setZipCode(e.target.value)}
+                                    maxLength={5}
+                                />
+                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 to-teal-400/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                             </div>
-                            <input
-                                type="text"
-                                placeholder="Enter Zip Code"
-                                value={zipCode}
-                                onChange={(e) => setZipCode(e.target.value)}
-                                className="w-full pl-12 pr-6 py-4 text-lg border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all text-gray-900 placeholder-gray-400 bg-gray-50/50"
-                                maxLength={5}
-                                pattern="[0-9]*"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-blue-500/30 active:scale-95"
-                        >
-                            Analyze Water
-                        </button>
-                    </form>
-                    <p className="text-sm text-gray-400 mt-4 font-medium">
-                        Popular: <span className="text-blue-500 cursor-pointer hover:underline" onClick={() => setZipCode('10001')}>10001</span>, <span className="text-blue-500 cursor-pointer hover:underline" onClick={() => setZipCode('90210')}>90210</span>, <span className="text-blue-500 cursor-pointer hover:underline" onClick={() => setZipCode('98683')}>98683</span>
-                    </p>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 text-left">
-                    {[
-                        { icon: '💧', title: 'Real-Time Data', desc: 'Direct from EPA databases for your specific area.' },
-                        { icon: '🛡️', title: 'Health First', desc: 'Identify harmful contaminants like PFAS & Lead.' },
-                        { icon: '✅', title: 'Expert Picks', desc: 'Get matched with the exact filter you need.' }
-                    ].map((feature, idx) => (
-                        <div key={idx} className="p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/50 shadow-sm hover:shadow-md transition-all">
-                            <div className="text-4xl mb-4 bg-blue-50 w-16 h-16 flex items-center justify-center rounded-2xl">{feature.icon}</div>
-                            <h3 className="font-bold text-slate-900 mb-2 text-lg">{feature.title}</h3>
-                            <p className="text-slate-600 text-sm leading-relaxed">{feature.desc}</p>
+                            <button
+                                type="submit"
+                                className="w-full py-5 bg-gradient-to-r from-blue-600 to-teal-500 text-white text-lg font-bold rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transform hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group"
+                            >
+                                <span className="relative z-10">Analyze Water Quality</span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </button>
+                        </form>
+
+                        <div className="mt-8 flex items-center justify-center space-x-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Data Source:</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/US_EPA_logo.svg" alt="EPA" className="h-8" />
                         </div>
-                    ))}
-                </div>
-            </div>
+                    </div>
+                </motion.div>
+            </section>
         </main>
     );
 }
