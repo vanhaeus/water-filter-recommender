@@ -177,12 +177,29 @@ export const getWaterQuality = async (zipCode) => {
 
     const { violations, pfasDetected } = await fetchViolations(systemInfo.pwsid);
 
+    // Ensure we don't add duplicate 'PFAS' if we already have specific PFAS/PFOA/PFOS objects
+    const finalContaminants = [...violations];
+    const hasDetailedPFAS = finalContaminants.some(c =>
+        c.name.toUpperCase().includes('PFAS') ||
+        c.name.toUpperCase().includes('PFOA') ||
+        c.name.toUpperCase().includes('PFOS')
+    );
+
+    if (pfasDetected && !hasDetailedPFAS) {
+        finalContaminants.push({
+            name: 'PFAS',
+            level: 'Detected',
+            unit: '',
+            source: 'EPA Violation'
+        });
+    }
+
     return {
         zipCode,
         pwsid: systemInfo.pwsid,
         city: systemInfo.pwsName || "Unknown", // Using PWS Name as proxy
         state: "US",
         hardness: "Unknown",
-        contaminants: [...violations, ...(pfasDetected ? ['PFAS'] : [])]
+        contaminants: finalContaminants
     };
 };
